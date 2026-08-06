@@ -303,6 +303,8 @@ module fv_arrays_mod
                             !< 8 by default; 9 recommended. It is also recommended to use the same value
                             !< for 'kord_wz' as for 'kord_mt'.
 
+
+
    !> Vorticity & w transport options:
    integer :: hord_vt = 9   !< Horizontal advection scheme for absolute vorticity and for
                             !< vertical velocity in nonhydrostatic simulations. 9 by default.
@@ -968,6 +970,35 @@ module fv_arrays_mod
                                           !< balance, causing the entire atmospheric column to expand instantaneously.
                                           !< If .false., heating from the physics is applied simply as a temperature
                                           !< tendency. The default value is .true.; ignored if hydrostatic = .true.
+
+   logical :: GEOS_MLT = .false.          !< Adding GEOS_MLT. Default false, if levels 
+                                          !< are 186 or 190, this will turn to true and adds GEOS_MLT physics and dynamics
+
+   logical :: do_mol_diffusion = .false.  !< Include molecular diffusion
+ 
+   integer :: mol_diffusion_k_top = 1     !< Top level to apply molecular diffusion
+
+   integer :: mol_diffusion_k_bot = 10    !< Bottom level to apply molecular diffusion 
+
+   real :: prandtl_number = 1.0           !< Tuning parameter for molecular diffusion -- based on thermal conduction
+
+   ! GEOS-MLT thermal conduction controls. These can be set from
+   ! fv_core_nml or from GEOS resources through FV_StateMod.F90.
+   logical :: geos_mlt_thermcond_enable = .true.    !< Apply GEOS-MLT thermal conduction
+   logical :: geos_mlt_thermcond_limit = .false.    !< Limit applied thermal-conduction dT/dt
+   real :: geos_mlt_thermcond_dtmax = 2.0e-3        !< Max |dT/dt| from thermal conduction [K/s]
+
+   ! Temporary GEOS-MLT altitude diagnostics for the top few layers.
+   logical :: geos_mlt_alt_diag = .true.            !< Print top-layer altitude diagnostics
+   integer :: geos_mlt_alt_diag_kmax = 5            !< Number of top layers to print
+   integer :: geos_mlt_alt_diag_print_stride = 20   !< Print every N dyn_core calls
+
+   ! GEOS-MLT molecular momentum diffusion controls. These can be set from
+   ! fv_core_nml or from GEOS resources through FV_StateMod.F90.
+   logical :: geos_mlt_momdiff_enable = .true.      !< Apply molecular momentum diffusion to U/V
+   logical :: geos_mlt_momdiff_heat = .false.       !< Add molecular KE-loss heating to PT
+   real :: geos_mlt_momdiff_pr = 0.70               !< Prandtl number for nu = Pr*lambda/(rho*cp)
+   real :: geos_mlt_momdiff_pmax_pa = 1.0           !< Apply where layer pressure <= this value [Pa]
 
    logical :: use_hydro_pressure = .false.   !< Whether to compute hydrostatic pressure for input to the physics.
                                              !< Currently only enabled for the fvGFS model.
